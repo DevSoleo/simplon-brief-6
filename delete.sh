@@ -1,3 +1,5 @@
+#!/bin/bash
+
 sudo kubectl delete deploy --all
 sudo kubectl delete svc --all
 sudo kubectl delete pvc --all
