@@ -1,0 +1,194 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: azb-deployment
+  labels:
+    app: redis
+spec:
+  replicas: 3
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 2 
+      maxUnavailable: 0
+  selector:
+    matchLabels:
+      app: redis
+  template:
+    metadata:
+      labels:
+        app: redis
+    spec:
+      hostname: redis-host
+      subdomain: azb-clusterip
+      volumes:
+        - name: volume-redis
+          csi:
+            driver: file.csi.azure.com
+            readOnly: false
+            volumeAttributes:
+              secretName: storage-secret
+              shareName: redis-fileshare
+      containers:
+      - name: azb-container
+        image: redis:latest
+          args: ["dir", "/mnt/database",  "--requirepass", "$(REDIS_PWD)"]
+          volumeMounts:
+          - name: volume-redis
+            mountPath: /data
+        env:
+        - name: ALLOW_EMPTY_PASSWORD
+          value: "no"
+        - name: REDIS_USR
+          valueFrom:
+            secretKeyRef:
+              name: redis-credentials
+              key: username
+        - name: REDIS_PWD
+          valueFrom:
+            secretKeyRef:
+              name: redis-credentials
+              key: password
+        ports:
+        - containerPort: 6379
+      volumes:
+       - name: mypd
+         persistentVolumeClaim:
+           claimName: azure-managed-disk
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: azb-clusterip
+spec:
+  ports:
+  - port: 6379
+  selector:
+    app: redis
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: azf-deployment
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: votingapp
+  template:
+    metadata:
+      labels:
+        app: votingapp
+    spec:
+      containers:
+      - name: azf-container
+        image: whujin11e/public:azure_voting_app
+        ports:
+        - containerPort: 80
+        env:
+          - name: REDIS
+            value: "redis-host.azb-clusterip"
+          - name: STRESS_SECS
+            value: "0"
+          - name: REDIS_USR
+            valueFrom:
+              secretKeyRef:
+                name: redis-credentials
+                key: username
+          - name: REDIS_PWD
+            valueFrom:
+              secretKeyRef:
+                name: redis-credentials
+                key: password
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: azf-loadbalancer
+spec:
+  type: LoadBalancer
+  ports:
+    - port: 80
+  selector:
+    app: votingapp
+
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: redis-pv
+spec:
+  capacity:
+    storage: 5Gi
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: azurefile-csi
+  csi:
+    driver: file.csi.azure.com
+    readOnly: false
+    volumeHandle: unique-volumeid
+    volumeAttributes:
+      resourceGroup: brief6_rgroup
+      shareName: redis-fileshare
+    nodeStageSecretRef:
+      name: storage-secret
+      namespace: default
+  mountOptions:
+    - dir_mode=0777
+    - file_mode=0777
+    - uid=0
+    - gid=0
+    - mfsymlinks 
+    - cache=strict 
+    - nosharesock
+    - nobrl
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: redis-pvc
+spec:
+  storageClassName: azurefile-csi
+  volumeName: redis-pv
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 3Gi
+
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: autoscaler
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: azf-deployment
+  minReplicas: 1
+  maxReplicas: 8
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 70
+status:
+  observedGeneration: 1
+  lastScaleTime:
+  currentReplicas: 1
+  desiredReplicas: 1
+  currentMetrics:
+  - type: Resource
+    resource:
+      name: cpu
+      current:
+        averageUtilization: 0
+        averageValue: 0
