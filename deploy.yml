@@ -33,7 +33,7 @@ spec:
       containers:
       - name: azb-container
         image: redis:latest
-          args: ["dir", "/mnt/database",  "--requirepass", "$(REDIS_PWD)"]
+          args: ["--requirepass", "$(REDIS_PWD)"]
           volumeMounts:
           - name: volume-redis
             mountPath: /data
