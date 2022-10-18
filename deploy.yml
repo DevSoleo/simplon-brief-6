@@ -52,10 +52,6 @@ spec:
               key: password
         ports:
         - containerPort: 6379
-      volumes:
-       - name: mypd
-         persistentVolumeClaim:
-           claimName: azure-managed-disk
 
 ---
 apiVersion: v1
