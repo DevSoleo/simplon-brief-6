@@ -4,7 +4,7 @@ kind: Deployment
 metadata:
   name: az-redis
 spec:
-  replicas: 1
+  replicas: 3
   selector:
     matchLabels:
       app: redis-azure
@@ -61,7 +61,7 @@ kind: Deployment
 metadata:
   name: votingapp
 spec:
-  replicas: 1
+  replicas: 3
   selector:
     matchLabels:
       app: votingapp
@@ -97,7 +97,6 @@ kind: Service
 metadata:
   name: azf-loadbalancer
 spec:
-  type: LoadBalancer
   ports:
     - port: 80
   selector:
@@ -131,7 +130,7 @@ spec:
       - path: /
         backend:
           service:
-            name: votingapp
+            name: azf-loadbalancer
             port:
               number: 80
         pathType: Exact
