@@ -47,7 +47,7 @@ Indiquez l'adresse IP publique de l'AGIC lors de la création de cette règle, o
 ```
 $ kubectl get ingress
 NAME                      CLASS    HOSTS         ADDRESS          PORTS     AGE
-simple-frontend-ingress   <none>   devsoleo.fr   xx.xx.xx.xx   80, 443   17h
+simple-frontend-ingress   <none>   devsoleo.fr   xx.xx.xx.xx      80, 443   17h
 ```
 
 #### 3. Installation de cert-manager (v.1.8.0)
