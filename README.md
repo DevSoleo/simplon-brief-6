@@ -41,12 +41,15 @@ $ kubectl apply -f infrastructure.yml
 $ kubectl apply -f ingress-tls.yml
 ```
 
-#### 2. Installation de cert-manager (v.1.8.0)
+#### 2. Mise à jour de la partie DNS du fournisseur de nom de domaine
+`$ kubectl get ingress`
+
+#### 3. Installation de cert-manager (v.1.8.0)
 ```
 $ kubectl apply -f https://github.com/jetstack/cert-manager/releases/download/v1.8.0/cert-manager.yaml
 ```
 
-#### 3. Gestion du certificat TLS
+#### 4. Gestion du certificat TLS
 ```
 $ kubectl apply -f certificate-issuer.yml
 ```
