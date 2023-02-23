@@ -1,0 +1,25 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: simple-frontend-ingress
+  annotations:
+    kubernetes.io/ingress.class: azure/application-gateway
+    appgw.ingress.kubernetes.io/ssl-redirect: "true"
+    cert-manager.io/issuer: letsencrypt-prod
+    cert-manager.io/acme-challenge-type: http01
+spec:
+  tls:
+    - hosts:
+      - devsoleo.fr
+      secretName: frontend-tls
+  rules:
+  - host: devsoleo.fr
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: azf-loadbalancer
+            port: 
+              number: 80
