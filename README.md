@@ -27,7 +27,7 @@ $ az group create --name myResourceGroup --location eastus
 $ az aks create -n myCluster -g myResourceGroup --network-plugin azure --enable-managed-identity -a ingress-appgw --appgw-name myApplicationGateway --appgw-subnet-cidr "10.225.0.0/16" --generate-ssh-keys
 ```
 
-#### 2. Déploiement de l'infrastructur
+#### 2. Déploiement de l'infrastructure
 
 ```
 $ az aks get-credentials -n myCluster -g myResourceGroup
@@ -37,6 +37,7 @@ $ kubectl apply -f infrastructure.yml
 
 ### Nom de domaine + TLS
 #### 1. Création de l'Ingress
+>Ne pas oublier de remplacer `mydomain.com` par votre nom de domaine.
 ```
 $ kubectl apply -f ingress-tls.yml
 ```
@@ -47,7 +48,7 @@ Indiquez l'adresse IP publique de l'AGIC lors de la création de cette règle, o
 ```
 $ kubectl get ingress
 NAME                      CLASS    HOSTS         ADDRESS          PORTS     AGE
-simple-frontend-ingress   <none>   devsoleo.fr   xx.xx.xx.xx      80, 443   17h
+simple-frontend-ingress   <none>   mydomain.com  xx.xx.xx.xx      80, 443   5m
 ```
 
 #### 3. Installation de cert-manager (v.1.8.0)
@@ -56,9 +57,16 @@ $ kubectl apply -f https://github.com/jetstack/cert-manager/releases/download/v1
 ```
 
 #### 4. Gestion du certificat TLS
+> Ne pas oublier de remplacer `my@email.com` par l'email communiquée à votre fournisseur de nom de domaine.
 ```
 $ kubectl apply -f certificate-issuer.yml
 ```
+
+#### 5. Vérification
+Exécutez la commande suivante afin d'obtenir l'état du certificat :
+`$ kubectl get certificate`
+
+Si la valeur "READY" est égale à "True", alors le certificate est fonctionnel.
 
 ## Annexes
 ### Commandes d'administration
