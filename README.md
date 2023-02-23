@@ -1,4 +1,4 @@
-# simplon-brief-6-p2
+# Simplon - Brief 6
 
 ## Schéma de l'infrastructure finale
 ```mermaid
@@ -41,8 +41,14 @@ $ kubectl apply -f infrastructure.yml
 $ kubectl apply -f ingress-tls.yml
 ```
 
-#### 2. Mise à jour de la partie DNS du fournisseur de nom de domaine
-`$ kubectl get ingress`
+#### 2. Mise à jour de la partie DNS
+Une fois sur le dashboard du fournisseur de nom de domaine, ajouter une règle `A` dans la zone DNS. <br />
+Indiquez l'adresse IP publique de l'AGIC lors de la création de cette règle, obtenable grâce à la commande suivante :
+```
+$ kubectl get ingress
+NAME                      CLASS    HOSTS         ADDRESS          PORTS     AGE
+simple-frontend-ingress   <none>   devsoleo.fr   xx.xx.xx.xx   80, 443   17h
+```
 
 #### 3. Installation de cert-manager (v.1.8.0)
 ```
