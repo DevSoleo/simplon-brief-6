@@ -1,16 +1,6 @@
 # simplon-brief-6-p2
 
-```
-az group create --name myResourceGroup --location eastus
-
-az aks create -n myCluster -g myResourceGroup --network-plugin azure --enable-managed-identity -a ingress-appgw --appgw-name myApplicationGateway --appgw-subnet-cidr "10.225.0.0/16" --generate-ssh-keys
-
-az aks get-credentials -n myCluster -g myResourceGroup
-
-kubectl create secret generic redis-credentials --from-literal=username=mydbusername --from-literal=password=myinsanepassword
-
-kubectl apply -f infra.yml
-```
+## Schéma de l'infrastructure finale
 ```mermaid
 flowchart LR
 
@@ -23,3 +13,50 @@ flowchart LR
         voting_app[Voting App] --> cluster_ip((Cluster IP)) --> redis
     end
 ```
+
+## Déploiement
+### Infrastructure minimale
+#### 1. Création d'un groupe de ressource
+
+```
+$ az group create --name myResourceGroup --location eastus
+```
+
+#### 2. Création d'un cluster AKS (avec le plugin AGIC)
+```
+$ az aks create -n myCluster -g myResourceGroup --network-plugin azure --enable-managed-identity -a ingress-appgw --appgw-name myApplicationGateway --appgw-subnet-cidr "10.225.0.0/16" --generate-ssh-keys
+```
+
+#### 2. Déploiement de l'infrastructur
+
+```
+$ az aks get-credentials -n myCluster -g myResourceGroup
+$ kubectl create secret generic redis-credentials --from-literal=username=mydbusername --from-literal=password=myinsanepassword
+$ kubectl apply -f infrastructure.yml
+```
+
+### Nom de domaine + TLS
+#### 1. Création de l'Ingress
+```
+$ kubectl apply -f ingress-tls.yml
+```
+
+#### 2. Installation de cert-manager (v.1.8.0)
+```
+$ kubectl apply -f https://github.com/jetstack/cert-manager/releases/download/v1.8.0/cert-manager.yaml
+```
+
+#### 3. Gestion du certificat TLS
+```
+$ kubectl apply -f certificate-issuer.yml
+```
+
+## Annexes
+### Commandes d'administration
+Permet d'obtenir l'adresse IP publique de l'Application Gateway : `$ kubectl get ingress`
+
+Permet d'obtenir l'état du certificat (doit être sur Ready=True) : `$ kubectl get certificate`
+
+### Sources
+Redirection HTTP -> HTTPS : https://learn.microsoft.com/fr-fr/azure/application-gateway/redirect-http-to-https-portal#add-a-routing-rule-with-a-redirection-configuration
+Aide pour l'activation du TLS : https://faun.pub/securing-your-aks-application-with-https-using-azure-application-gateway-lets-encrypt-7d6589b6e22a
