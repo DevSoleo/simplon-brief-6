@@ -64,9 +64,11 @@ $ kubectl apply -f certificate-issuer.yml
 
 #### 5. Vérification
 Exécutez la commande suivante afin d'obtenir l'état du certificat :
-`$ kubectl get certificate`
-
-Si la valeur "READY" est égale à "True", alors le certificate est fonctionnel.
+```
+$ kubectl get certificate
+NAME           READY   SECRET         AGE
+frontend-tls   True    frontend-tls   24h
+```
 
 ## Annexes
 ### Commandes d'administration
