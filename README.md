@@ -27,7 +27,7 @@ $ az group create --name myResourceGroup --location eastus
 $ az aks create -n myCluster -g myResourceGroup --network-plugin azure --enable-managed-identity -a ingress-appgw --appgw-name myApplicationGateway --appgw-subnet-cidr "10.225.0.0/16" --generate-ssh-keys
 ```
 
-#### 2. Déploiement de l'infrastructure
+#### 3. Déploiement de l'infrastructure
 
 ```
 $ az aks get-credentials -n myCluster -g myResourceGroup
@@ -75,5 +75,5 @@ Permet d'obtenir l'adresse IP publique de l'Application Gateway : `$ kubectl get
 Permet d'obtenir l'état du certificat (doit être sur Ready=True) : `$ kubectl get certificate`
 
 ### Sources
-Redirection HTTP -> HTTPS : https://learn.microsoft.com/fr-fr/azure/application-gateway/redirect-http-to-https-portal#add-a-routing-rule-with-a-redirection-configuration
+Redirection HTTP -> HTTPS : https://learn.microsoft.com/fr-fr/azure/application-gateway/ingress-controller-annotations#tls-redirect <br />
 Aide pour l'activation du TLS : https://faun.pub/securing-your-aks-application-with-https-using-azure-application-gateway-lets-encrypt-7d6589b6e22a
