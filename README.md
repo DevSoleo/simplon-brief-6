@@ -51,21 +51,13 @@ Kubernetes, à la manière de Docker, dispose [d'un outil de résolution de noms
 > Commentaire : Fonctionnalité qui m'a été utile (afin d'indiquer une base de données redis se trouvant dans un node différent de celui de l'application)
 
 #### Stockage
-Pour disposer d'un stockage persistant, il est nécessaire de déclarer un `PersistentVolume` ainsi qu'un `PersistentVolumeClaim`. Ses resources réclameront et rendront accessible un espace de stockage créé en amont.
-
-<!--
-INTEROGATIONS :
-LABELS
-INGRESS
-DIFFERENCE ENTRE STRATEGY dans deployment ET HorizontalPodAutoscaler
--->
+Pour disposer d'un stockage persistant, il est nécessaire de déclarer `PersistentVolumeClaim`. Cette ressource rendra accessible un espace de stockage créé automatiquement.
 
 ## DAT (Document d’Architecture Technique) de l’infrastructure déployée
-
 ### Critères
 L'infrastructure déployée doit valider un certain nombre de conditions :
 - [x] Éxécuter une application de vote
-- [x] Être scalable (supporter le test de charge présenté dans le brief 4)
+- [x] Être scalable (supporter un test de charge)
 - [x] Avoir une base de données Redis persistante
 - [x] Être accessible à travers un `Ingress`
 - [x] Être accessible en HTTPS (avec un nom de domaine)
@@ -83,19 +75,19 @@ L'infrastructure déployée doit valider un certain nombre de conditions :
 | Certbot / TLS | | ✓ |
 
 ### Liste des tâches et méthodologie
-- [x] Création des ressources Azure nécessaires
+- [x] Création des ressources nécessaires
     - Créer un nouveau Resource Group
-    - Créer un Cluster AKS et un Pool contenant 4 nodes 
-    - Créer un Storage Account et son File Share
-- [x] Installation de `kubectl`
-- [x] Rédaction d'un manifeste K8S
-    - Lire la documentation
+    - Créer un Cluster AKS (avec le plugin AGIC)
+- [x] Installation et connexion de `kubectl`
+- [x] Rédaction des manifestes
     - Rédiger le déploiement de l'infrastructure minimale (`VotingApp` + `Redis` + `Service`)
-    - Ajouter des secrets pour la connexion avec la base de données et pour le File Share
-    - Ajouter d'un `PersistentVolume` et d'un `PersistentVolumeClaim` afin d'exploiter le File Share créé plus tôt
-- [x] Effectuer un test de charge (avec le script du brief 4)
+    - Ajouter des secrets pour la connexion avec la base de données
+    - Ajouter d'un `PersistentVolumeClaim` afin de rendre les données persistantes
+    - Rédiger la partie TLS
+- [x] Tester les manifestes
+- [x] Effectuer un test de charge ([avec ce script](https://github.com/DevSoleo/multithreaded-loadtest))
 
-> Commentaire : Le brief étant bien accompagné, j'ai juste eu à suivre à la lettre les instructions, une par une, en m'aidant de la documentation. En revanche, j'ai fait l'erreur de ne pas lire entièrement le brief avant de commencer. Ce qui m'a vallu de perdre du temps alors que toutes les réponses se trouvait dedans.
+Commentaire : Le brief étant bien accompagné, j'ai juste eu à suivre à la lettre les instructions, une par une, en m'aidant de la documentation. En revanche, j'ai fait l'erreur de ne pas lire entièrement le brief avant de commencer. Ce qui m'a vallu de perdre du temps alors que toutes les réponses se trouvait dedans.
 
 ### La topologie de l'infrastructure
 
