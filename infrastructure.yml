@@ -4,7 +4,7 @@ kind: Deployment
 metadata:
   name: az-redis
 spec:
-  replicas: 3
+  replicas: 1
   selector:
     matchLabels:
       app: redis-azure
@@ -61,7 +61,7 @@ kind: Deployment
 metadata:
   name: votingapp
 spec:
-  replicas: 3
+  replicas: 2
   selector:
     matchLabels:
       app: votingapp
@@ -72,7 +72,7 @@ spec:
     spec:
       containers:
       - name: alfred-voting
-        image: simplonasa/azure_voting_app:v1.0.112
+        image: whujin11e/public:azure_voting_app
         resources:
           requests:
             cpu: 100m
@@ -115,3 +115,36 @@ spec:
   resources:
     requests:
       storage: 3Gi
+
+---
+# Autoscale Voteapp
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: horizontalscaler
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: votingapp
+  minReplicas: 1
+  maxReplicas: 8
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 70
+status:
+  observedGeneration: 1
+  lastScaleTime: 
+  currentReplicas: 1
+  desiredReplicas: 1
+  currentMetrics:
+  - type: Resource
+    resource:
+      name: cpu
+      current:
+        averageUtilization: 0
+        averageValue: 0
