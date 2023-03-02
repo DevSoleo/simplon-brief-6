@@ -1,4 +1,4 @@
-# Simplon - Brief 6
+# Brief 6 - Kubernetes
 
 ## Executive Summary
 ### Demande du client
