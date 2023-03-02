@@ -92,13 +92,13 @@ Commentaire : Le brief étant bien accompagné, j'ai juste eu à suivre à la le
 ```mermaid
 flowchart LR
 
-    internet[Internet] --> ingress((AGIC))
+    client[Client] -- HTTPS --> ingress((AGIC))
 
     subgraph azure[Azure]
-        ingress --> load_balancer((Load Balancer))
-        voting_app <---> load_balancer
-        redis[Redis] --> storage_account[(Compte de stockage)]
-        voting_app[Voting App] --> cluster_ip((Cluster IP)) --> redis
+        ingress <-. HTTP .-> service((Cluster IP))
+        voting_app <-.-> service
+        redis[Redis] <-.-> storage_account[(Compte de stockage)]
+        voting_app[Voting App] <-.-> cluster_ip((Cluster IP)) <-.-> redis
     end
 ```
 
