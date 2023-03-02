@@ -20,6 +20,6 @@ spec:
         pathType: Prefix
         backend:
           service:
-            name: azf-loadbalancer
+            name: front-service
             port: 
               number: 80
