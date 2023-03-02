@@ -5,14 +5,14 @@
 Les utilisateurs doivent pouvoir voter sur une application web, elle doit être hautement disponible et accessible depuis un nom de domaine via le protocole `HTTPS`. Ses données doivent être persistantes.
 
 ### Solution proposée
-Cette application sera déployée avec Kubernetes sur Azure. Un Ingress sera mis en place afin de pouvoir correspondre aux critères de sécurité cités plus haut. La base de données Redis, et la Voting App d'Azure seront choisis.
+Cette application sera déployée avec Kubernetes sur Azure. Un Ingress sera mis en place afin de pouvoir correspondre aux critères de sécurité cités plus haut. La base de données Redis, et la Voting App d'Azure seront choisies.
 
 ### État actuel
-L'application fonctionne et est hautement disponible, ses données sont persistantes, et elle est accessible via un nom de domaine en `HTTPS`.
+L'application fonctionne et est hautement disponible, ses données sont persistantes, et elle est accessible grâce à un nom de domaine via le protocole `HTTPS`.
 
 ## Fonctionnement de Kubernetes (aka k8s)
 
-**Kubernetes** est un outil (désormais open-souce), développé par Google, basé sur **Docker**, permettant de déployer une infrastructure à l'aide de fichiers de configuration. 
+**Kubernetes** est un orchestrateur de conteneur, open-souce, développé par Google, basé sur **Docker**, permettant de déployer une infrastructure à l'aide de fichiers de configuration. 
 
 Cet outil a pour particularité de modifier l'infrastructure existante afin de la faire correspondre avec la configuration donnée. Cela a pour avantage de ne pas avoir à supprimer puis recréer des ressources déjà fonctionnelles.
 
@@ -24,7 +24,7 @@ Il permet d'appliquer des manifestes, de lire les logs, ou de connaitre le statu
 ### Manifeste
 Les fichiers de configuration (manifestes) doivent être écrits en YAML afin d'être interpretables.
 
-Les ressources déployées via un manifeste k8s s'organisent de cette manière en YAML :
+Les ressources déployées via un manifeste k8s s'organisent en général de cette manière en YAML :
 
 ```yml
 ---
@@ -36,8 +36,6 @@ spec: # Paramètres de la ressource
 
 ### Secrets
 A l'aide de `kubectl`, il est possible de créer des secrets. Cette fonctionnalité permet de garder privé, des token, ou des identifiants que l'on souhaiterai utiliser dans un manifeste.
-
-Les secrets doivent être créés avant d'appliquer un manifeste.
 
 ### Ressources
 #### Deployment et pods
@@ -55,7 +53,7 @@ Pour disposer d'un stockage persistant, il est nécessaire de déclarer `Persist
 
 ## DAT (Document d’Architecture Technique) de l’infrastructure déployée
 ### Critères
-L'infrastructure déployée doit valider un certain nombre de conditions :
+L'infrastructure déployée doit valider un certain nombre de critères :
 - [x] Éxécuter une application de vote
 - [x] Être scalable (supporter un test de charge)
 - [x] Avoir une base de données Redis persistante
